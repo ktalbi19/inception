@@ -1,0 +1,46 @@
+server {
+
+     # TELLS TO LISTEN TO PORT 443 (ITS AN HTTP PORT)
+     listen 443 ssl;
+     # same but for IPV6
+	listen [::]:443 ssl;
+
+     # tells the name(s) of our website
+     server_name katalbi.42.fr;
+
+	#Create the SSL certificates in your own folder
+	ssl_certificate		/etc/nginx/ssl/katalbi.crt;
+	ssl_certificate_key	/etc/nginx/ssl/katalbi.key;
+
+
+	#Encription protocol TSL v1.3
+	ssl_protocols		TLSv1.3;
+
+	#This is the index page and the directory where we get it from
+	root /var/www/wordpress;
+	index index.php index.nginx-debian.html;
+
+
+	# Checks the existence of files
+	# Otherwise a 404 will be sent
+	location / {
+		root /var/www/wordpress;
+		try_files $uri $uri/ =404;
+	}
+
+	# Now we check for the configuration of PHP on nginx
+	location ~ [^/]\.php(/|$) {
+		fastcgi_pass wordpress:9000;
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		fastcgi_index index.php;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_param PATH_INFO $fastcgi_path_info;
+		include fastcgi_params;
+	}
+}
+
+	# will redirect us to https://$host$request_uri;
+	# when we try to reach the website name in our browser
+	# NGINX 301 Redirect is a form of HTTP redirection. One can utilize HTTP redirection 
+	# to direct one domain or address to another domain or address.
+	# return 301 https://$host$request_uri;

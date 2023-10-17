@@ -1,0 +1,73 @@
+version: '3.5'
+
+networks:
+  inception:
+
+services:
+
+# #====MARIADB====
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    env_file: .env
+    build:
+      context: ./requirements/mariadb
+      args:
+         - DB_NAME=${DB_NAME}
+         - DB_USER=${DB_USER}
+         - DB_PASSWORD=${DB_PASSWORD}
+         - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    networks:
+      - inception
+    volumes:
+      - mariadb_vol:/var/lib/mysql
+    restart: unless-stopped
+
+  # #====WORDPRESS====
+
+  wordpress:
+    container_name: wordpress
+    image: wordpress
+    build:
+      context: ./requirements/wordpress
+    volumes:
+      - wordpress_vol:/var/www/wordpress
+    env_file: .env
+    depends_on:
+      - mariadb
+        # condition: service_healthy
+    networks:
+      - inception
+    restart: unless-stopped
+
+#=====NGINX======
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    volumes:
+      - wordpress_vol:/var/www/wordpress
+    depends_on:
+      - wordpress
+    build: ./requirements/nginx
+    networks:
+      - inception
+    ports:
+      - 443:443
+    restart: unless-stopped
+
+#Here we are setting up the binding of the volumes with the correct container
+volumes:
+    mariadb_vol:
+      driver: local
+      driver_opts:
+        device: "/home/katalbi/data/mariadb"
+        type: none
+        o: bind
+    wordpress_vol:
+      driver: local
+      driver_opts:
+        type: none
+        device: "/home/katalbi/data/wordpress"
+        o: bind
