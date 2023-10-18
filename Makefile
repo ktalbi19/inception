@@ -52,4 +52,8 @@ clean:
 	@echo "$(RED)Deleting all data ... $(RESET)"
 	@echo "$(RED)Deleting all $(RESET)"
 
-.PHONY: run up debug list list_volumes clean
+fclean:
+	docker system prune
+	sudo rm -rf /home/katalbi/data/mariadb/*
+	sudo rm -rf /home/katalbi/data/wordpress/*
+.PHONY: run up debug list list_volumes clean fclean

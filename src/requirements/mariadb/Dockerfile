@@ -9,7 +9,7 @@ EXPOSE	3306
 
 #	DEPENDANCIES
 RUN apt-get update && apt-get install -y \
-	mariadb-server mariadb-client && \
+	bash mariadb-server mariadb-client && \
 	rm -rf /var/lib/apt/lists/*
 
 #	Remove the original config file from mariadb and replace it with your own

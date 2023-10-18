@@ -16,7 +16,6 @@ wp core install "--title=$WP_TITLE" \
 				"--url=$WP_URL" \
 				"--allow-root"
 
-# wp theme install chique-photography.1.1.1.zip -activate
 wp user create $WP_USER $WP_USER_MAIL --role=author --user_pass=$WP_USER_PASSWORD --allow-root
 
 #Launch PHP FPM in foreground and ignore deamonize from conf file (-F)

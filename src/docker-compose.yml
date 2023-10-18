@@ -36,7 +36,6 @@ services:
     env_file: .env
     depends_on:
       - mariadb
-        # condition: service_healthy
     networks:
       - inception
     restart: unless-stopped
